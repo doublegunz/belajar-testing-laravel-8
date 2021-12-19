@@ -20,3 +20,7 @@ Route::get('/', function () {
 
 Route::get('tasks', [TasksController::class, 'index'])->name('tasks.index');
 Route::post('tasks', [TasksController::class, 'store'])->name('tasks.store');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
