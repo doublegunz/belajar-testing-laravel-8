@@ -106,7 +106,42 @@ class ManageTasksTest extends TestCase
     /** @test */
     public function user_can_edit_an_existing_task()
     {
-        $this->assertTrue(true);
+        // Generate 1 record task pada table `tasks`.
+        $task = Task::create([
+            'name' => 'task 1',
+            'description' => 'deskripsi task 1'
+        ]);
+
+        // User membuka halaman Daftar Task
+        $this->visit('/tasks');
+
+        // Klik tombol edit task
+        $this->click('edit_task_' . $task->id);
+
+        // Lihat URL yang dituju sesuai dengan target
+        $this->seePageIs('/tasks?action=edit&id=' . $task->id);
+
+        // tampil form edit task
+        $this->seeElement('form', [
+            'id' => 'edit_task_' . $task->id,
+            'action' => url('tasks/' . $task->id),
+        ]);
+
+        // user submit form berisi nama dan deskripsi
+        $this->submitForm('Update Task', [
+            'name' => 'Updated Task',
+            'description' => 'Updated task description.'
+        ]);
+
+        // lihat halaman web ter-redirect ke url sesuai dengan target
+        $this->seePageIs('/tasks');
+
+        // record pada database berubah sesuai dengan nama dan deskripsi
+        $this->seeInDatabase('tasks', [
+            'id' => $task->id,
+            'name' => 'Updated Task',
+            'description' => 'Updated task description.'
+        ]);
     }
 
     /** @test */

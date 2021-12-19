@@ -31,7 +31,7 @@
     <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="card">
             <div class="card-body">
-                <h2>New Task</h2>
+
                 @if (count($errors) > 0)
                 <div class="alert alert-danger">
                     <ul class="list-unstyled">
@@ -41,23 +41,51 @@
                     </ul>
                 </div>
                 @endif
-                <form action="{{ route('tasks.index') }}" method="post">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="exampleInputname1" class="form-label">Nama</label>
-                        <input type="text" class="form-control" name="name" aria-describedby="nameHelp">
-                        <div id="nameHelp" class="form-text">We'll never share your name with anyone else.</div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="exampleInputPassword1" class="form-label">Description</label>
-                        <textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Create Task</button>
-                </form>
+
+                @if (! is_null($editableTask) && request('action') == 'edit')
+                    <h2>Edit Task {{ $editableTask->name }}</h2>
+                    <form id="edit_task_{{ $editableTask->id }}" action="{{ url('tasks/'.$editableTask->id) }}" method="post">
+                        @csrf
+                        @method('patch')
+
+                        <div class="mb-3">
+                            <label for="exampleInputname1" class="form-label">Nama</label>
+                            <input type="text" class="form-control" name="name" aria-describedby="nameHelp" value="{{ old('name', $editableTask->name) }}">
+                            <div id="nameHelp" class="form-text">We'll never share your name with anyone else.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label">Description</label>
+                            <textarea name="description" id="" cols="30" rows="10" class="form-control">{{ old('description', $editableTask->description) }}</textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Task</button>
+                    </form>
+
+                @else
+                    <h2>New Task</h2>
+                    <form action="{{ route('tasks.index') }}" method="post">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="exampleInputname1" class="form-label">Nama</label>
+                            <input type="text" class="form-control" name="name" aria-describedby="nameHelp">
+                            <div id="nameHelp" class="form-text">We'll never share your name with anyone else.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label">Description</label>
+                            <textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Task</button>
+                    </form>
+
+                @endif
+
 
             </div>
         </div>
