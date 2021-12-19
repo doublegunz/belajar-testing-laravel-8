@@ -11,8 +11,13 @@
                 <ul class="list-group list-group-flush">
                     @foreach ($tasks as $task)
                     <li class="list-group-item">
+
+
                         {{ $task->name }}<br>
                         {{ $task->description }}
+                        <a href="{{ url('tasks') }}?action=edit&id={{ $task->id }}" id="edit_task_{{ $task->id }}" class="pull-end">
+                            edit
+                        </a>
                     </li>
                     @endforeach
                 </ul>
