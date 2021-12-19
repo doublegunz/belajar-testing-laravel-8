@@ -27,6 +27,15 @@
         <div class="card">
             <div class="card-body">
                 <h2>New Task</h2>
+                @if (count($errors) > 0)
+                <div class="alert alert-danger">
+                    <ul class="list-unstyled">
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
                 <form action="{{ route('tasks.index') }}" method="post">
                     @csrf
                     <div class="mb-3">
