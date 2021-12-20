@@ -10,21 +10,36 @@
                 <h2>Tasks</h2>
                 <ul class="list-group list-group-flush">
                     @foreach ($tasks as $task)
-                    <li class="list-group-item">
+                    <li class="list-group-item {{ $task->is_done ? 'task-done' : '' }} d-flex justify-content-between align-items-center">
+
+                        <div class="ms-2 me-auto">
+                            <form action="{{ url('tasks/'.$task->id.'/toggle') }}" method="post">
+                                @csrf
+                                @method('patch')
+                                <input type="submit" value="{{ $task->name }}" id="toggle_task_{{ $task->id }}" class="btn btn-link no-padding">
+                            </form>
+                            {{ $task->description }}
+                        </div>
+
+                        <div class="float-end">
+                            <a href="{{ url('tasks') }}?action=edit&id={{ $task->id }}" id="edit_task_{{ $task->id }}" class="float-end">
+                                edit
+                            </a>
+                            <form action="{{ route('tasks.delete', $task->id) }}" method="post"
+                                onsubmit="return confirm('Are you sure to delete this task?')">
+                                @csrf
+                                @method('DELETE')
+
+                                <button class="btn btn-danger btn-sm float-end" id="delete_task_{{$task->id}}">X</button>
+
+                            </form>
+
+                        </div>
 
 
-                        {{ $task->name }}<br>
-                        {{ $task->description }}
-                        <a href="{{ url('tasks') }}?action=edit&id={{ $task->id }}" id="edit_task_{{ $task->id }}" class="float-end">
-                            edit
-                        </a>
-                        <form action="{{ route('tasks.delete', $task->id) }}" method="post" onsubmit="return confirm('Are you sure to delete this task?')">
-                            @csrf
-                            @method('DELETE')
 
-                            <button class="btn btn-danger btn-sm float-end" id="delete_task_{{$task->id}}">X</button>
 
-                        </form>
+
                     </li>
                     @endforeach
                 </ul>

@@ -168,4 +168,39 @@ class ManageTasksTest extends TestCase
         ]);
 
     }
+
+    /** @test */
+    public function user_can_toggle_task_status()
+    {
+        // generate 1 record task pada table `tasks`
+        $task =Task::factory()->create();
+
+        // user membuka halaman daftar task
+        $this->visit('/tasks');
+
+        // user tekan tombol dengan id="toggle_task_1"
+        $this->press('toggle_task_' . $task->id);
+
+        // lihat halaman web ter-redirect ke halaman daftar task
+        $this->seePageIs('/tasks');
+
+        // kolom is_done pada record task berubah menjadi 1
+        $this->seeInDatabase('tasks', [
+            'id' => $task->id,
+            'is_done' => 1
+        ]);
+
+        //user tekan tombol dengan id="toggle_task_1" (lagi)
+        // untuk mengembalikan status task
+        $this->press('toggle_task_' . $task->id);
+
+        // lihat halaman web ter-redirect ke halaman daftar task
+        $this->seePageIs('/tasks');
+
+        // kolom is_done pada record task berubah menjadi 0
+        $this->seeInDatabase('tasks', [
+            'id' => $task->id,
+            'is_done' => 0
+        ]);
+    }
 }
