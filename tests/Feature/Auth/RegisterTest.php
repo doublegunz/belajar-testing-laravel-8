@@ -12,6 +12,16 @@ class RegisterTest extends TestCase
     // trait refresh database agar migration dijalankan
     use RefreshDatabase;
 
+    private function getRegisterFields($overrides = [])
+    {
+        return array_merge([
+            'name' => 'violet',
+            'email' => 'violet@test.com',
+            'password' => 'secret12345',
+            'password_confirmation' => 'secret12345'
+        ], $overrides);
+    }
+
     /** @test */
     public function user_can_register()
     {
@@ -19,12 +29,7 @@ class RegisterTest extends TestCase
         $this->visit('/register');
 
         // Submit form register dengan name, email dan password 2 kali
-        $this->submitForm('Register', [
-            'name'                  => 'username',
-            'email'                 => 'username@example.net',
-            'password'              => 'secret12345',
-            'password_confirmation' => 'secret12345',
-        ]);
+        $this->submitForm('Register', $this->getRegisterFields());
 
         // lihat halaman ter-redirect ke url '/home' (register sukses)
         $this->seePageIs('/home');
@@ -34,8 +39,8 @@ class RegisterTest extends TestCase
 
         // lihat di database user yang sudah register
         $this->seeInDatabase('users', [
-            'name' => 'username',
-            'email' => 'username@example.net'
+            'name' => 'violet',
+            'email' => 'violet@test.com'
         ]);
 
         // cek hash passwrod
@@ -45,12 +50,7 @@ class RegisterTest extends TestCase
     /** @test */
     public function user_name_is_required()
     {
-        $this->post('/register', [
-            'name' => '',
-            'email' => 'username@tes.com',
-            'password' => 'secret12345',
-            'password_confirmation' => 'secret12345'
-        ]);
+        $this->post('/register', $this->getRegisterFields(['name' => '']));
 
         $this->assertSessionHasErrors(['name']);
     }
@@ -58,48 +58,28 @@ class RegisterTest extends TestCase
     /** @test */
     public function user_name_maximum_is_255_character()
     {
-        $this->post('/register', [
-            'name' => str_repeat('John thor ', 26),
-            'email' => 'username@tes.com',
-            'password' => 'secret12345',
-            'password_confirmation' => 'secret12345'
-        ]);
+        $this->post('/register', $this->getRegisterFields(['name' => str_repeat('John thor ', 26)]));
 
         $this->assertSessionHasErrors(['name']);
     }
 
     public function user_email_is_required()
     {
-        $this->post('/register', [
-            'name' => 'Nadia rizky',
-            'email' => '',
-            'password' => 'secret12345',
-            'password_confirmation' => 'secret12345'
-        ]);
+        $this->post('/register', $this->getRegisterFields(['email' => '']));
 
         $this->assertSessionHasErrors(['email']);
     }
 
     public function user_email_must_be_a_valid_email()
     {
-        $this->post('/register', [
-            'name' => 'Nadia rizky',
-            'email' => 'nadia.example.net',
-            'password' => 'secret12345',
-            'password_confirmation' => 'secret12345'
-        ]);
+        $this->post('/register', $this->getRegisterFields(['email' => 'nadia.example.net']));
 
         $this->assertSessionHasErrors(['email']);
     }
 
     public function user_email_maximum_is_255_characters()
     {
-        $this->post('/register', [
-            'name' => 'Nadia rizky',
-            'email' => str_repeat('nadiarizky', 13) . '@gmail.com',
-            'password' => 'secret12345',
-            'password_confirmation' => 'secret12345'
-        ]);
+        $this->post('/register', $this->getRegisterFields(['email' => str_repeat('nadiarizky', 13) . '@gmail.com',]));
 
         $this->assertSessionHasErrors(['email']);
     }
@@ -113,13 +93,7 @@ class RegisterTest extends TestCase
             'password_confirmation' => 'secret12345'
         ]);
 
-        $this->post('/register', [
-            'name' => 'nadia rizky',
-            'email' => 'emailsama@tes.com',
-            'password' => 'secret123458',
-            'password_confirmation' => 'secret123458'
-
-        ]);
+        $this->post('/register', $this->getRegisterFields(['email' => 'emailsama@tes.com']));
 
         $this->assertSessionHasErrors(['email']);
     }
@@ -127,12 +101,7 @@ class RegisterTest extends TestCase
     /** @test */
     public function user_password_is_required()
     {
-        $this->post('/register', [
-            'name' => 'Nadia rizky',
-            'email' => 'nadia@tes.com',
-            'password' => '',
-            'password_confirmation' => 'secret12345'
-        ]);
+        $this->post('/register', $this->getRegisterFields(['password' => '']));
 
         $this->assertSessionHasErrors(['password']);
     }
@@ -140,12 +109,7 @@ class RegisterTest extends TestCase
     /** @test */
     public function user_password_minimum_is_8_characters()
     {
-        $this->post('/register', [
-            'name' => 'Nadia rizky',
-            'email' => 'nadia@tes.com',
-            'password' => 'secret',
-            'password_confirmation' => 'secret'
-        ]);
+        $this->post('/register', $this->getRegisterFields(['password' => 'secret']));
 
         $this->assertSessionHasErrors(['password']);
 
@@ -154,12 +118,7 @@ class RegisterTest extends TestCase
     /** @test */
     public function user_password_must_be_same_with_password_confirmation()
     {
-        $this->post('/register', [
-            'name' => 'Nadia rizky',
-            'email' => 'nadia@tes.com',
-            'password' => 'secret12345',
-            'password_confirmation' => 'secret432423'
-        ]);
+        $this->post('/register', $this->getRegisterFields(['password' => 'secret1234553',]));
 
         $this->assertSessionHasErrors(['password']);
 
