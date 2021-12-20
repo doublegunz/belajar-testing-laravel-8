@@ -21,6 +21,7 @@ Route::get('/', function () {
 Route::get('tasks', [TasksController::class, 'index'])->name('tasks.index');
 Route::post('tasks', [TasksController::class, 'store'])->name('tasks.store');
 Route::patch('/tasks/{task}', [TasksController::class, 'update'])->name('tasks.update');
+Route::delete('/tasks/{task}', [TasksController::class, 'destroy'])->name('tasks.delete');
 
 Auth::routes();
 

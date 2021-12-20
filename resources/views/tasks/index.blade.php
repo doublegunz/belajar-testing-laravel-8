@@ -15,9 +15,16 @@
 
                         {{ $task->name }}<br>
                         {{ $task->description }}
-                        <a href="{{ url('tasks') }}?action=edit&id={{ $task->id }}" id="edit_task_{{ $task->id }}" class="pull-end">
+                        <a href="{{ url('tasks') }}?action=edit&id={{ $task->id }}" id="edit_task_{{ $task->id }}" class="float-end">
                             edit
                         </a>
+                        <form action="{{ route('tasks.delete', $task->id) }}" method="post" onsubmit="return confirm('Are you sure to delete this task?')">
+                            @csrf
+                            @method('DELETE')
+
+                            <button class="btn btn-danger btn-sm float-end" id="delete_task_{{$task->id}}">X</button>
+
+                        </form>
                     </li>
                     @endforeach
                 </ul>
